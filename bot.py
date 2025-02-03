@@ -1,13 +1,16 @@
+import asyncio
+import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from aiogram.utils import executor
-import logging
+from aiogram.filters import Command
 import config
 
-bot = Bot(token=config.TOKEN)
-dp = Dispatcher(bot)
-
+# Логирование
 logging.basicConfig(level=logging.INFO)
+
+# Создаём бота и диспетчер
+bot = Bot(token=config.TOKEN)
+dp = Dispatcher()
 
 # Клавиатура выбора типа продукта
 keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -16,19 +19,27 @@ keyboard.add(KeyboardButton("Ювелирные изделия"), KeyboardButton
 keyboard.add(KeyboardButton("Фарфор"), KeyboardButton("Изделия из металла"))
 keyboard.add(KeyboardButton("Ввести своё"))
 
-@dp.message_handler(commands=['start'])
+# Обработчик команды /start
+@dp.message(Command("start"))
 async def start(message: types.Message):
     await message.answer("Привет! Я помогу рассчитать стоимость e-commerce фотографии.\nСколько продуктов вы хотите сфотографировать?", reply_markup=types.ReplyKeyboardRemove())
 
-@dp.message_handler(lambda message: message.text.isdigit())
+# Обработчик ввода количества продуктов
+@dp.message(lambda message: message.text.isdigit())
 async def get_products_count(message: types.Message):
     await message.answer("Сколько фотографий нужно на один продукт?")
 
-@dp.message_handler(lambda message: message.text.isdigit())
+# Обработчик ввода количества фото на продукт
+@dp.message(lambda message: message.text.isdigit())
 async def get_photos_per_product(message: types.Message):
     await message.answer("Выберите тип продукта:", reply_markup=keyboard)
 
-if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+# Функция запуска бота
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
 
 
