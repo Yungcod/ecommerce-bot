@@ -1,7 +1,6 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils import executor
-import os
 import logging
 import config
 
@@ -10,6 +9,7 @@ dp = Dispatcher(bot)
 
 logging.basicConfig(level=logging.INFO)
 
+# Клавиатура выбора типа продукта
 keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 keyboard.add(KeyboardButton("Растения"), KeyboardButton("Косметика"))
 keyboard.add(KeyboardButton("Ювелирные изделия"), KeyboardButton("Стекло"))
@@ -30,4 +30,5 @@ async def get_photos_per_product(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
 
